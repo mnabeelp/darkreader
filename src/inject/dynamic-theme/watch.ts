@@ -13,7 +13,9 @@ interface ChangedStyles {
 
 function getAllManageableStyles(nodes: Iterable<Node> | ArrayLike<Node>) {
     const results: (HTMLLinkElement | HTMLStyleElement)[] = [];
-    Array.from(nodes).forEach((node) => {
+    const nodes2 = Array.prototype.slice.call(nodes);
+    for (let x = 0, len = nodes2.length; x < len; x++) {
+        const node = nodes2[x];
         if (node instanceof Element) {
             if (shouldManageStyle(node)) {
                 results.push(node as HTMLLinkElement | HTMLStyleElement);
@@ -21,12 +23,10 @@ function getAllManageableStyles(nodes: Iterable<Node> | ArrayLike<Node>) {
         }
         if (node instanceof Element || node instanceof ShadowRoot) {
             results.push(
-                ...Array.from<HTMLLinkElement | HTMLStyleElement>(
-                    node.querySelectorAll(STYLE_SELECTOR)
-                ).filter(shouldManageStyle)
+                Array.prototype.slice.call(document.querySelectorAll(STYLE_SELECTOR)).filter(shouldManageStyle) as (HTMLLinkElement | HTMLStyleElement)
             );
         }
-    });
+    }
     return results;
 }
 
@@ -46,7 +46,7 @@ function collectUndefinedElements(root: ParentNode) {
                     if (elementsDefinitionCallback) {
                         const elements = undefinedGroups.get(tag);
                         undefinedGroups.delete(tag);
-                        elementsDefinitionCallback(Array.from(elements));
+                        elementsDefinitionCallback(Array.prototype.slice.call(elements));
                     }
                 });
             }
@@ -111,67 +111,73 @@ export function watchForStyleChanges(update: (styles: ChangedStyles) => void) {
         const additions = new Set<Node>();
         const deletions = new Set<Node>();
         const styleUpdates = new Set<HTMLLinkElement | HTMLStyleElement>();
-        mutations.forEach((m) => {
-            m.addedNodes.forEach((n) => additions.add(n));
-            m.removedNodes.forEach((n) => deletions.add(n));
+        for (let x = 0, len = mutations.length; x < len; x++) {
+            const m = mutations[x];
+            for (let y = 0, len2 = m.addedNodes.length; x < len2; x++) {
+                additions.add(m.addedNodes[y]);
+            }
+            for (let z = 0, len3 = m.removedNodes.length; z < len3; z++) {
+                deletions.add(m.removedNodes[z]);
+            }
             if (m.type === 'attributes' && shouldManageStyle(m.target)) {
                 styleUpdates.add(m.target as HTMLLinkElement | HTMLStyleElement);
             }
-        });
+        }
         const styleAdditions = getAllManageableStyles(additions);
         const styleDeletions = getAllManageableStyles(deletions);
-        additions.forEach((n) => {
-            iterateShadowNodes(n, (host) => {
+        for (let xa = 0, len4 = [...additions].length; xa < len4; xa++) {
+            iterateShadowNodes([...additions][xa], (host) => {
                 const shadowStyles = getAllManageableStyles(host.shadowRoot.children);
                 if (shadowStyles.length > 0) {
                     styleAdditions.push(...shadowStyles);
                 }
             });
-        });
-        deletions.forEach((n) => {
-            iterateShadowNodes(n, (host) => {
+        }
+        for (let xd = 0, len5 = [...deletions].length; xd < len5; xd++) {
+            iterateShadowNodes([...deletions][xd], (host) => {
                 const shadowStyles = getAllManageableStyles(host.shadowRoot.children);
                 if (shadowStyles.length > 0) {
                     styleDeletions.push(...shadowStyles);
                 }
             });
-        });
-
-        styleDeletions.forEach((style) => {
+        }
+        for (let sd = 0, len6 = styleDeletions.length; sd < len6; sd++) {
+            const style = styleDeletions[sd];
             if (style.isConnected) {
                 movedStyles.add(style);
             } else {
                 removedStyles.add(style);
             }
-        });
-        styleUpdates.forEach((style) => {
+        }
+        for (let su = 0, len7 = [...styleUpdates].length; su < len7; su++) {
+            const style = [...styleUpdates][su];
             if (!removedStyles.has(style)) {
                 updatedStyles.add(style);
             }
-        });
-        styleAdditions.forEach((style) => {
+        }
+        for (let sa = 0, len8 = styleAdditions.length; sa < len8; sa++) {
+            const style = styleAdditions[sa];
             if (!(removedStyles.has(style) || movedStyles.has(style) || updatedStyles.has(style))) {
                 createdStyles.add(style);
             }
-        });
-
+        }
         if (createdStyles.size + removedStyles.size + updatedStyles.size > 0) {
             update({
-                created: Array.from(createdStyles),
-                updated: Array.from(updatedStyles),
-                removed: Array.from(removedStyles),
-                moved: Array.from(movedStyles),
+                created: Array.prototype.slice.call(createdStyles),
+                updated: Array.prototype.slice.call(updatedStyles),
+                removed: Array.prototype.slice.call(removedStyles),
+                moved: Array.prototype.slice.call(movedStyles),
             });
         }
-
-        additions.forEach((n) => {
+        for (let a = 0, len9 = [...additions].length; a < len9; a++) {
+            const n = [...additions][a];
             if (n.isConnected) {
                 iterateShadowNodes(n, subscribeForShadowRootChanges);
                 if (n instanceof Element) {
                     collectUndefinedElements(n);
                 }
             }
-        });
+        }
     }
 
     function subscribeForShadowRootChanges(node: Element) {

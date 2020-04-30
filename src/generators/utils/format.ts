@@ -30,7 +30,7 @@ export function formatSitesFixesConfig(fixes: SiteFix[], options: SitesFixesForm
         });
         if (i < fixes.length - 1) {
             lines.push('');
-            lines.push(Array.from({length: 32}).fill('=').join(''));
+            lines.push(Array.prototype.slice.call({length: 32}).fill('=').join(''));
             lines.push('');
         }
     });

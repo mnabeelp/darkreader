@@ -39,7 +39,7 @@ function setupStylePositionWatcher(node: Node, alias: string) {
 }
 
 function stopStylePositionWatchers() {
-    Array.from(stylePositionWatchers.values()).forEach((watcher) => watcher.stop());
+    [...stylePositionWatchers.values()].forEach((watcher) => watcher.stop());
     stylePositionWatchers.clear();
 }
 
@@ -123,17 +123,17 @@ function createDynamicStyleOverrides() {
 
     updateVariables(getElementCSSVariables(document.documentElement));
 
-    const allStyles = Array.from(document.querySelectorAll(STYLE_SELECTOR)) as (HTMLLinkElement | HTMLStyleElement)[];
+    const allStyles = Array.prototype.slice.call(document.querySelectorAll(STYLE_SELECTOR)) as (HTMLLinkElement | HTMLStyleElement)[];
     iterateShadowNodes(document.documentElement, (node) => {
         const shadowStyles = node.shadowRoot.querySelectorAll(STYLE_SELECTOR);
         if (shadowStyles.length > 0) {
-            allStyles.push(...Array.from(shadowStyles as NodeListOf<HTMLLinkElement | HTMLStyleElement>));
+            allStyles.push(...shadowStyles as NodeListOf<HTMLLinkElement | HTMLStyleElement>);
         }
     });
 
-    const newManagers = Array.from<HTMLLinkElement | HTMLStyleElement>(allStyles)
+    const newManagers = Array.prototype.slice.call((allStyles)
         .filter((style) => !styleManagers.has(style) && shouldManageStyle(style))
-        .map((style) => createManager(style));
+        .map((style) => createManager(style)));
     const newVariables = newManagers
         .map((manager) => manager.details())
         .filter((details) => details && details.variables.size > 0)
@@ -153,12 +153,12 @@ function createDynamicStyleOverrides() {
     }
     newManagers.forEach((manager) => manager.watch());
 
-    const inlineStyleElements = Array.from(document.querySelectorAll(INLINE_STYLE_SELECTOR));
+    const inlineStyleElements = [...document.querySelectorAll(INLINE_STYLE_SELECTOR)];
     iterateShadowNodes(document.documentElement, (node) => {
         const elements = node.shadowRoot.querySelectorAll(INLINE_STYLE_SELECTOR);
         if (elements.length > 0) {
             createShadowStaticStyleOverrides(node.shadowRoot);
-            inlineStyleElements.push(...Array.from(elements as NodeListOf<HTMLLinkElement | HTMLStyleElement>));
+            inlineStyleElements.push(...elements as NodeListOf<HTMLLinkElement | HTMLStyleElement>);
         }
     });
     inlineStyleElements.forEach((el) => overrideInlineStyle(el as HTMLElement, filter, fixes.ignoreInlineStyle));
@@ -378,8 +378,14 @@ export function removeDynamicTheme() {
         removeNode(root.querySelector('.darkreader--inline'));
     });
     shadowRootsWithOverrides.clear();
-    Array.from(styleManagers.keys()).forEach((el) => removeManager(el));
-    Array.from(document.querySelectorAll('.darkreader')).forEach(removeNode);
+    for (let x = 0, len = [...styleManagers.keys()].length; x < len; x++) {
+        removeManager(styleManagers.keys()[x]);
+    }
+    const queryall = Array.prototype.slice.call(document.querySelectorAll('.darkreader'));
+    for (let x = 0, len2 = queryall.length; x < len2; x++) {
+        removeManager(queryall[x]);
+    }
+
 }
 
 export function cleanDynamicThemeCache() {

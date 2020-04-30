@@ -104,14 +104,15 @@ export function getInlineOverrideStyle() {
 
 function expand(nodes: Node[], selector: string) {
     const results: Node[] = [];
-    nodes.forEach((n) => {
+    for (let x = 0, len = nodes.length; x < len; x++) {
+        const n = nodes[x];
         if (n instanceof Element) {
             if (n.matches(selector)) {
                 results.push(n);
             }
-            results.push(...Array.from(n.querySelectorAll(selector)));
+            results.push(...n.querySelectorAll(selector));
         }
-    });
+    }
     return results;
 }
 
@@ -137,7 +138,7 @@ export function deepWatchForInlineStyles(
     }
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((m) => {
-            const createdInlineStyles = expand(Array.from(m.addedNodes), INLINE_STYLE_SELECTOR);
+            const createdInlineStyles = expand([...m.addedNodes], INLINE_STYLE_SELECTOR);
             if (createdInlineStyles.length > 0) {
                 createdInlineStyles.forEach((el: HTMLElement) => elementStyleDidChange(el));
             }
@@ -222,12 +223,12 @@ export function overrideInlineStyle(element: HTMLElement, theme: FilterConfig, i
 
     if (ignoreSelectors.length > 0) {
         if (shouldIgnoreInlineStyle(element, ignoreSelectors)) {
-            unsetProps.forEach((cssProp) => {
+            for (let x = 0, len = Array.prototype.slice.call(unsetProps).length; x < len; x++) {
+                const cssProp = Array.prototype.slice.call(unsetProps)[x];
                 const {store, dataAttr} = overrides[cssProp];
                 store.delete(element);
                 element.removeAttribute(dataAttr);
-            });
-            return;
+            }
         }
     }
 
@@ -274,10 +275,11 @@ export function overrideInlineStyle(element: HTMLElement, theme: FilterConfig, i
         setCustomProp('fill', 'color', element.style.getPropertyValue('fill'));
     }
 
-    Array.from(unsetProps).forEach((cssProp) => {
+    for (let x = 0, len = Array.prototype.slice.call(unsetProps).length; x < len; x++) {
+        const cssProp = Array.prototype.slice.call(unsetProps)[x];
         const {store, dataAttr} = overrides[cssProp];
         store.delete(element);
         element.removeAttribute(dataAttr);
-    });
+    }
     inlineStyleCache.set(element, getInlineStyleCacheKey(element, theme));
 }

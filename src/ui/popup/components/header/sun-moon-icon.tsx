@@ -32,7 +32,7 @@ export default function SunMoonIcon({date, latitude, longitude}) {
         <svg viewBox="0 0 16 16">
             <circle fill="white" stroke="none" cx="8" cy="8" r="3" />
             <g fill="none" stroke="white" stroke-linecap="round" stroke-width="1.5">
-                {...(Array.from({length: 8}).map((_, i) => {
+                {...(Array.prototype.slice.call({length: 8}).map((_, i) => {
                     const cx = 8;
                     const cy = 8;
                     const angle = i * Math.PI / 4 + Math.PI / 8;
