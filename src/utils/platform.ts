@@ -54,7 +54,7 @@ export function getChromeVersion() {
 export function compareChromeVersions($a: string, $b: string) {
     const a = $a.split('.').map((x) => parseInt(x));
     const b = $b.split('.').map((x) => parseInt(x));
-    for (let i = 0; i < a.length; i++) {
+    for (let i = 0, len = a.length; i < len; i++) {
         if (a[i] !== b[i]) {
             return a[i] < b[i] ? -1 : 1;
         }

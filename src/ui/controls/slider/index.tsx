@@ -80,7 +80,7 @@ export default function Slider(props: SliderProps) {
                 : null;
 
             function getTouch(e: TouchEvent) {
-                const find = (touches: TouchList) => [...touches].find((t) => t.identifier === touchId);
+                const find = (touches: TouchList) => Array.prototype.slice.call(touches).find((t: { identifier: number; }) => t.identifier === touchId);
                 return find(e.changedTouches) || find(e.touches);
             }
 

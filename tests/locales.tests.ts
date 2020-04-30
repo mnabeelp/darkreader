@@ -38,7 +38,7 @@ test('Locales', async () => {
     function compareLinesToEnLocale(predicate: (en: string, loc: string) => boolean) {
         return locales.every((loc, j) => {
             const lines = loc.split('\n');
-            for (let i = 0; i < Math.min(lines.length, enLines.length); i++) {
+            for (let i = 0, len = Math.min(lines.length, enLines.length); i < len; i++) {
                 if (!predicate(enLines[i], lines[i])) {
                     console.error(`${files[j]}, line ${i + 1}`);
                     return false;
