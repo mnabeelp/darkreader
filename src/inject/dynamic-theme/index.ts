@@ -39,7 +39,7 @@ function setupStylePositionWatcher(node: Node, alias: string) {
 }
 
 function stopStylePositionWatchers() {
-    Array.prototype.slice.call(stylePositionWatchers.values()).forEach((watcher) => watcher.stop());
+    [...stylePositionWatchers.values()].forEach((watcher) => watcher.stop());
     stylePositionWatchers.clear();
 }
 
@@ -153,7 +153,7 @@ function createDynamicStyleOverrides() {
     }
     newManagers.forEach((manager) => manager.watch());
 
-    const inlineStyleElements = Array.prototype.slice.call(document.querySelectorAll(INLINE_STYLE_SELECTOR));
+    const inlineStyleElements = [...document.querySelectorAll(INLINE_STYLE_SELECTOR)];
     iterateShadowNodes(document.documentElement, (node) => {
         const elements = node.shadowRoot.querySelectorAll(INLINE_STYLE_SELECTOR);
         if (elements.length > 0) {
@@ -378,9 +378,8 @@ export function removeDynamicTheme() {
         removeNode(root.querySelector('.darkreader--inline'));
     });
     shadowRootsWithOverrides.clear();
-    const styleManagerskeys = Array.prototype.slice.call(styleManagers.keys());
-    for (let x = 0, len = styleManagerskeys.length; x < len; x++) {
-        removeManager(styleManagerskeys[x]);
+    for (let x = 0, len = [...styleManagers.keys()].length; x < len; x++) {
+        removeManager(styleManagers.keys()[x]);
     }
     const queryall = Array.prototype.slice.call(document.querySelectorAll('.darkreader'));
     for (let x = 0, len2 = queryall.length; x < len2; x++) {

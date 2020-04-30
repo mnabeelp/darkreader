@@ -28,7 +28,7 @@ export function changeMetaThemeColorWhenAvailable(theme: FilterConfig) {
         }
         observer = new MutationObserver((mutations) => {
             loop: for (const m of mutations) {
-                for (const node of Array.prototype.slice.call(m.addedNodes)) {
+                for (const node of [...m.addedNodes]) {
                     if (node instanceof HTMLMetaElement && node.name === metaThemeColorName) {
                         observer.disconnect();
                         observer = null;

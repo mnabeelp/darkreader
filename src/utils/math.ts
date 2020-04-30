@@ -8,11 +8,11 @@ export function clamp(x: number, min: number, max: number) {
 
 export function multiplyMatrices(m1: number[][], m2: number[][]) {
     const result: number[][] = [];
-    for (let i = 0, len = m1.length; i < len; i++) {
+    for (let i = 0; i < m1.length; i++) {
         result[i] = [];
-        for (let j = 0, len2 = m2[0].length; j < len2; j++) {
+        for (let j = 0; j < m2[0].length; j++) {
             let sum = 0;
-            for (let k = 0, len3 = m1[0].length; k < len3; k++) {
+            for (let k = 0; k < m1[0].length; k++) {
                 sum += m1[i][k] * m2[k][j];
             }
             result[i][j] = sum;

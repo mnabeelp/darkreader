@@ -14,7 +14,7 @@ export function compareURLPatterns(a: string, b: string) {
  * @paramlist List to search into.
  */
 export function isURLInList(url: string, list: string[]) {
-    for (let i = 0, len = list.length; i < len; i++) {
+    for (let i = 0; i < list.length; i++) {
         if (isURLMatched(url, list[i])) {
             return true;
         }
@@ -68,7 +68,7 @@ function createUrlRegex(urlTemplate: string): RegExp {
 
     const hostParts = beforeSlash.split('.');
     result += '(';
-    for (let i = 0, len = hostParts.length; i < len; i++) {
+    for (let i = 0; i < hostParts.length; i++) {
         if (hostParts[i] === '*') {
             hostParts[i] = '[^\\.\\/]+?';
         }
