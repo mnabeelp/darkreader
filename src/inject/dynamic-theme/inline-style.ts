@@ -138,7 +138,7 @@ export function deepWatchForInlineStyles(
     }
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((m) => {
-            const createdInlineStyles = expand([...m.addedNodes], INLINE_STYLE_SELECTOR);
+            const createdInlineStyles = expand(Array.prototype.slice.call(m.addedNodes), INLINE_STYLE_SELECTOR);
             if (createdInlineStyles.length > 0) {
                 createdInlineStyles.forEach((el: HTMLElement) => elementStyleDidChange(el));
             }
@@ -223,8 +223,9 @@ export function overrideInlineStyle(element: HTMLElement, theme: FilterConfig, i
 
     if (ignoreSelectors.length > 0) {
         if (shouldIgnoreInlineStyle(element, ignoreSelectors)) {
-            for (let x = 0, len = Array.prototype.slice.call(unsetProps).length; x < len; x++) {
-                const cssProp = Array.prototype.slice.call(unsetProps)[x];
+            const unsetPropsArray = Array.prototype.slice.call(unsetProps);
+            for (let x = 0, len = unsetPropsArray.length; x < len; x++) {
+                const cssProp = unsetPropsArray[x];
                 const {store, dataAttr} = overrides[cssProp];
                 store.delete(element);
                 element.removeAttribute(dataAttr);
@@ -275,8 +276,9 @@ export function overrideInlineStyle(element: HTMLElement, theme: FilterConfig, i
         setCustomProp('fill', 'color', element.style.getPropertyValue('fill'));
     }
 
-    for (let x = 0, len = Array.prototype.slice.call(unsetProps).length; x < len; x++) {
-        const cssProp = Array.prototype.slice.call(unsetProps)[x];
+    const upa = Array.prototype.slice.call(unsetProps);
+    for (let x = 0, len = upa.length; x < len; x++) {
+        const cssProp = upa[x];
         const {store, dataAttr} = overrides[cssProp];
         store.delete(element);
         element.removeAttribute(dataAttr);
